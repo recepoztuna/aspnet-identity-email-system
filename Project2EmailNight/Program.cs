@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Project2EmailNight.Context;
 using Project2EmailNight.Entities;
 using Project2EmailNight.Models;
+using Project2EmailNight.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.SlidingExpiration = true;
 });
 
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllersWithViews();
 
@@ -63,7 +65,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+	name: "default",
+	pattern: "{controller=Register}/{action=Index}/{id?}");
 
 app.Run();

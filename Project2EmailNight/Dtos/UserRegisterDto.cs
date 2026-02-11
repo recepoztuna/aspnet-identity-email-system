@@ -33,11 +33,10 @@ namespace Project2EmailNight.Dtos
 			[Display(Name = "Confirm Password")]
 			public string ConfirmPassword { get; set; }
 
-			[Required(ErrorMessage = "Kullanım şartlarını kabul etmelisiniz")]
-			[Range(typeof(bool), "true", "true", ErrorMessage = "Kullanım şartlarını kabul etmelisiniz")]
-			[Display(Name = "I read and agree to Terms & Conditions")]
-			public bool AcceptTerms { get; set; }
-		
+		// ✅ BASİT CHECKBOX
+		    [Range(typeof(bool), "true", "true", ErrorMessage = "Kullanım şartlarını kabul etmelisiniz")]
+		    public bool AcceptTerms { get; set; }
+
 
 	}
 }

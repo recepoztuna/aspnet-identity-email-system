@@ -1,12 +1,42 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using Project2EmailNight.Entities
+@using Project2EmailNight.Context
+@inject UserManager<AppUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    ViewData["UserFirstName"] = currentUser?.FirstName ?? "Kullanıcı";
+    ViewData["UserLastName"] = currentUser?.LastName ?? "";
+    ViewData["UserEmail"] = currentUser?.Email ?? "";
+    ViewData["UserInitials"] = currentUser != null
+        ? $"{currentUser.FirstName?.Substring(0, 1)}{currentUser.LastName?.Substring(0, 1)}".ToUpper()
+        : "??";
+
+    // OKUNMAMIŞ MESAJLARI ÇEK
+    var unreadMessages = new List<Message>();
+    if (currentUser != null)
+    {
+        var serviceProvider = ViewContext.HttpContext.RequestServices;
+        var dbContext = serviceProvider.GetRequiredService<EmailContext>();
+
+        unreadMessages = dbContext.Messages
+            .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead && !m.IsDeletedByReceiver)
+            .OrderByDescending(m => m.SentDate)
+            .Take(5)
+            .Include(m => m.Sender)
+            .ToList();
+    }
+    ViewData["UnreadMessages"] = unreadMessages;
+    ViewData["UnreadCount"] = unreadMessages.Count;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>@ViewData["Title"] - Project2EmailNight</title>
     <link rel="icon" href="~/assets/images/favicon-32x32.png" type="image/png" />
-
-    <!-- Template CSS -->
     <link href="~/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
     <link href="~/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
     <link href="~/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
@@ -18,25 +48,32 @@
     <link rel="stylesheet" href="~/assets/css/dark-theme.css" />
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Ana Sidebar - Sadece normal sayfalarda göster -->
-        @if (ViewData["IsEmailPage"] == null || !(bool)ViewData["IsEmailPage"])
-        {
-            <partial name="_Sidebar" />
-        }
 
-        <!-- Header - Her zaman göster -->
-        <partial name="_Header" />
+    @if (ViewData["IsEmailPage"] != null && (bool)ViewData["IsEmailPage"])
+    {
+        <!-- ============ EMAIL SAYFASI - ÖZEL YAPI ============ -->
+        <div class="wrapper">
+            <!-- Header -->
+            <partial name="_Header"  />
 
-        <!-- Email Page mi Normal Page mi? -->
-        @if (ViewData["IsEmailPage"] != null && (bool)ViewData["IsEmailPage"])
-        {
-            <!-- Email Sayfası - Direkt RenderBody -->
+            <!-- Email Content - Direkt RenderBody (Wrapper YOK!) -->
             @RenderBody()
-        }
-        else
-        {
-            <!-- Normal Sayfa - Page Wrapper ile -->
+
+            <!-- Overlay -->
+            <div class="overlay toggle-btn-mobile"></div>
+        </div>
+    }
+    else
+    {
+        <!-- ============ NORMAL SAYFA - STANDART YAPI ============ -->
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <partial name="_Sidebar" />
+
+            <!-- Header -->
+            <partial name="_Header" />
+
+            <!-- Page Wrapper -->
             <div class="page-wrapper">
                 <div class="page-content-wrapper">
                     <div class="page-content">
@@ -44,19 +81,19 @@
                     </div>
                 </div>
             </div>
-        }
 
-        <!-- Overlay -->
-        <div class="overlay toggle-btn-mobile"></div>
+            <!-- Overlay -->
+            <div class="overlay toggle-btn-mobile"></div>
 
-        <!-- Back to Top -->
-        <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+            <!-- Back to Top -->
+            <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p class="mb-0">Project2EmailNight &copy; 2026</p>
+            <!-- Footer -->
+            <div class="footer">
+                <p class="mb-0">Project2EmailNight &copy; 2026</p>
+            </div>
         </div>
-    </div>
+    }
 
     <!-- Template JS -->
     <script src="~/assets/js/bootstrap.bundle.min.js"></script>
@@ -64,15 +101,6 @@
     <script src="~/assets/plugins/simplebar/js/simplebar.min.js"></script>
     <script src="~/assets/plugins/metismenu/js/metisMenu.min.js"></script>
     <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
-
-    @if (ViewData["IsEmailPage"] != null && (bool)ViewData["IsEmailPage"])
-    {
-        <script>
-            new PerfectScrollbar('.email-navigation');
-            new PerfectScrollbar('.email-list');
-        </script>
-    }
-
     <script src="~/assets/js/app.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

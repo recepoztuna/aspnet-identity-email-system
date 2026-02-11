@@ -1,0 +1,118 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Email Doğrulama - EmailApp</title>
+    <link rel="icon" href="~/assets/images/favicon-32x32.png" type="image/png" />
+    <link href="~/assets/css/pace.min.css" rel="stylesheet" />
+    <script src="~/assets/js/pace.min.js"></script>
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Roboto&display=swap" />
+    <link rel="stylesheet" href="~/assets/css/icons.css" />
+    <link rel="stylesheet" href="~/assets/css/app.css" />
+</head>
+<body>
+    <div class="wrapper">
+        <div class="authentication-reset-password d-flex align-items-center justify-content-center">
+            <div class="row">
+                <div class="col-12 col-lg-10 mx-auto">
+                    <div class="card radius-15">
+                        <div class="row g-0">
+                            <!-- Sol Taraf - Form -->
+                            <div class="col-lg-5">
+                                <div class="card-body p-md-5">
+                                    <!-- Logo -->
+                                    <div class="text-left">
+                                        <img src="~/assets/images/logo-img.png" width="180" alt="">
+                                    </div>
+
+                                    <!-- Başlık -->
+                                    <h4 class="mt-5 font-weight-bold">Email Doğrulama</h4>
+                                    <p class="text-muted">
+                                        <strong>@ViewBag.Email</strong> adresine doğrulama kodu gönderdik.
+                                        Lütfen email'inizdeki 6 haneli kodu girin.
+                                    </p>
+
+                                    <!-- Hata Mesajları -->
+                                    @if (!ViewData.ModelState.IsValid)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <div asp-validation-summary="All" class="text-danger"></div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    <!-- Form -->
+                                    <form asp-action="ConfirmEmail" asp-controller="Register" method="post">
+                                        <!-- Email (Hidden) -->
+                                        <input type="hidden" name="email" value="@ViewBag.Email" />
+
+                                        <!-- Doğrulama Kodu -->
+                                        <div class="mb-3 mt-4">
+                                            <label class="form-label">Doğrulama Kodu</label>
+                                            <input type="text"
+                                                   name="code"
+                                                   class="form-control form-control-lg text-center"
+                                                   placeholder="000000"
+                                                   maxlength="6"
+                                                   style="letter-spacing: 10px; font-size: 24px; font-weight: bold;"
+                                                   required />
+                                            <small class="text-muted">6 haneli kodu girin</small>
+                                        </div>
+
+                                        <!-- Butonlar -->
+                                        <div class="d-grid gap-2 mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class='bx bx-check-circle me-1'></i>Doğrula
+                                            </button>
+                                            <a asp-controller="Register" asp-action="CreateUser" class="btn btn-light">
+                                                <i class='bx bx-arrow-back me-1'></i>Kayıt Sayfasına Dön
+                                            </a>
+                                        </div>
+                                    </form>
+
+                                    <!-- Yeniden Gönder -->
+                                    <div class="text-center mt-4">
+                                        <p class="text-muted small">
+                                            Kodu almadınız mı?
+                                            <a href="#" onclick="alert('Kod yeniden gönderildi!'); return false;">
+                                                Yeniden Gönder
+                                            </a>
+                                        </p>
+                                        <p class="text-muted small">
+                                            ⏱️ Kod 15 dakika geçerlidir
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sağ Taraf - Resim -->
+                            <div class="col-lg-7">
+                                <img src="~/assets/images/login-images/forgot-password-frent-img.jpg"
+                                     class="card-img login-img h-100"
+                                     alt="Email Verification">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Sadece rakam girişi -->
+    <script>
+        document.querySelector('input[name="code"]').addEventListener('input', function (e) {
+            // Sadece rakam girişine izin ver
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+</body>
+</html>

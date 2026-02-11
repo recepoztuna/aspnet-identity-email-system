@@ -1,0 +1,254 @@
+﻿@model List<Project2EmailNight.Entities.Message>
+@{
+    ViewData["Title"] = "Gelen Kutusu";
+    // Pagination
+    int pageSize = 20;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = (int)Math.Ceiling((double)Model.Count / pageSize);
+    var pagedMessages = Model.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+    
+}
+
+<div class="page-wrapper">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            
+           
+                <!-- Email Header (Üst Araç Çubuğu) -->
+                <div class="email-header d-xl-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="email-toggle-btn"><i class='bx bx-menu'></i></div>
+                        <div class="btn btn-white">
+                            <input class="form-check-input" type="checkbox" id="selectAll">
+                        </div>
+                        <button type="button" class="btn btn-white ms-2"><i class='bx bx-refresh me-0'></i></button>
+                        <button type="button" class="btn btn-white ms-2"><i class='bx bx-trash me-0'></i></button>
+                    </div>
+
+                    <div class="flex-grow-1 mx-xl-2 my-2 my-xl-0">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent"><i class="bx bx-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Mesaj ara...">
+                        </div>
+                    </div>
+
+                    <div class="ms-auto d-flex align-items-center">
+                    <button class="btn btn-sm btn-light">@pagedMessages.Count mesaj</button>
+                    <a asp-action="Index" asp-route-page="@(currentPage - 1)"
+                       class="btn btn-white px-2 ms-2 @(currentPage == 1 ? "disabled" : "")">
+                        <i class='bx bx-chevron-left me-0'></i>
+                    </a>
+                    <a asp-action="Index" asp-route-page="@(currentPage + 1)"
+                       class="btn btn-white px-2 ms-2 @(currentPage >= totalPages ? "disabled" : "")">
+                        <i class='bx bx-chevron-right me-0'></i>
+                    </a>
+                    </div>
+                </div>
+
+                <!-- Email Content (Mesaj Listesi) -->
+                <div class="email-content">
+                    <div class="email-list">
+                    @foreach (var message in pagedMessages)
+                        {
+                            var initials = $"{message.Sender.FirstName?.Substring(0, 1)}{message.Sender.LastName?.Substring(0, 1)}".ToUpper();
+                            
+
+                            <div class="email-message-row d-flex align-items-center px-3 py-2 @(message.IsRead ? "" : "bg-body") position-relative">
+                                <!-- Checkbox -->
+                                <input class="form-check-input flex-shrink-0" type="checkbox" value="@message.Id" />
+
+                                <!-- Yıldız -->
+                                <i class='bx @(message.IsStarred ? "bxs-star text-warning" : "bx-star") font-20 mx-2 email-star cursor-pointer flex-shrink-0'
+                                   data-id="@message.Id"></i>
+
+                            <!-- Avatar (İlk Harfler) -->
+                            <div class="user-avatar flex-shrink-0 me-3 bg-primary">
+                                @initials
+                            </div>
+                                <!-- Mesaj İçeriği (Tıklanabilir) -->
+                                <a href="@Url.Action("Read", new { id = message.Id })" class="flex-grow-1 text-decoration-none text-dark email-message-content">
+                                    <div class="d-flex align-items-center w-100">
+                                        <!-- Gönderen Adı -->
+                                        <div class="sender-name me-3" style="min-width: 150px;">
+                                            <span class="@(message.IsRead ? "" : "fw-bold")">
+                                                @message.Sender.FirstName @message.Sender.LastName
+                                            </span>
+                                        </div>
+                                    <!-- Konu (Ayrı Sütun - Kalın) -->
+                                    <div class="message-subject me-3" style="min-width: 200px;">
+                                        <span class="fw-bold">@message.Subject</span>
+                                    </div>
+
+                                    <!-- Özet -->
+                                    <div class="message-preview flex-grow-1 text-muted">
+                                        @(message.Body?.Length > 50 ? message.Body.Substring(0, 50) + "..." : message.Body)
+                                    </div>
+
+                                        <!-- Tarih -->
+                                        <div class="email-time text-muted ms-3" style="min-width: 80px; text-align: right;">
+                                            @if (message.SentDate.Date == DateTime.Today)
+                                            {
+                                                @message.SentDate.ToString("HH:mm")
+                                            }
+                                            else if (message.SentDate.Date == DateTime.Today.AddDays(-1))
+                                            {
+                                                <text>Dün</text>
+                                            }
+                                            else
+                                            {
+                                                @message.SentDate.ToString("dd MMM")
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- Hızlı Aksiyonlar (Hover'da Görünür) -->
+                                <div class="email-quick-actions ms-3 flex-shrink-0">
+                                    <!-- Mesaj Gönder -->
+                                    <a href="@Url.Action("Compose", new { to = message.Sender.Email })"
+                                       class="btn btn-sm btn-light me-1"
+                                       title="Yanıtla">
+                                        <i class='bx bx-mail-send'></i>
+                                    </a>
+
+                                    <!-- Sil -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-light btn-delete-message"
+                                            data-id="@message.Id"
+                                            title="Sil">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Email Overlay -->
+                <div class="overlay email-toggle-btn-mobile"></div>
+
+            </div>
+            <!--end email wrapper-->
+        </div>
+    </div>
+</div>
+ 
+@section Scripts {
+    <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+    <script>
+        new PerfectScrollbar('.email-navigation');
+        new PerfectScrollbar('.email-list');
+
+        // Yıldız tıklama
+        $('.email-star').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var messageId = $(this).data('id');
+            var $star = $(this);
+
+            $.post('/Email/ToggleStar', { id: messageId }, function(result) {
+                if (result.success) {
+                    $star.toggleClass('bx-star bxs-star text-warning');
+                }
+            });
+        });
+
+        // Sil butonu
+        $('.btn-delete-message').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+                var messageId = $(this).data('id');
+
+                $.post('/Email/Delete', { id: messageId }, function(result) {
+                    if (result.success) {
+                        location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* Avatar Stilleri */
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white !important;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Mesaj Satırı */
+        .email-message-row {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+            .email-message-row:hover {
+                background-color: #f8f9fa !important;
+            }
+
+        .email-message-content {
+            overflow: hidden;
+        }
+
+        .message-preview {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Hızlı Aksiyonlar - Varsayılan Gizli */
+        .email-quick-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .email-message-row:hover .email-quick-actions {
+            opacity: 1;
+        }
+
+        .page-wrapper {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .page-content-wrapper {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            padding-top: 0 !important;
+            margin: 0 !important;
+        }
+
+        .page-content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .email-header {
+            margin-top: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        /* Yıldız */
+        .email-star {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .email-star:hover {
+                color: #ffc107 !important;
+            }
+
+
+    </style>
+}
+

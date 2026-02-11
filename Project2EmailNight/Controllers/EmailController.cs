@@ -1,12 +1,47 @@
-﻿using MailKit.Net.Smtp;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
+using Microsoft.EntityFrameworkCore;
+using Project2EmailNight.Context;
 using Project2EmailNight.Dtos;
+using Project2EmailNight.Entities;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace Project2EmailNight.Controllers
 {
+	[Authorize]  // ← Giriş yapmış kullanıcılar erişebilsin
 	public class EmailController : Controller
 	{
+		private readonly EmailContext _context;
+		private readonly UserManager<AppUser> _userManager;
+
+		public EmailController(
+			EmailContext context,
+			UserManager<AppUser> userManager)
+		{
+			_context = context;
+			_userManager = userManager;
+		}
+		// GET: Gelen Kutusu (Ana Sayfa)
+		public async Task<IActionResult> Index(int page = 1)
+		{
+			var currentUser = await _userManager.GetUserAsync(User);
+			if (currentUser == null)
+				return RedirectToAction("UserLogin", "Login");
+
+			var messages = await _context.Messages
+				.Where(m => m.ReceiverId == currentUser.Id
+						 && !m.IsDeletedByReceiver
+						 && !m.IsDraft)
+				.Include(m => m.Sender)
+				.OrderByDescending(m => m.SentDate)
+				.ToListAsync();
+
+			ViewBag.CurrentPage = page;
+
+			return View(messages);
+		}
 		public IActionResult SendEmail()
 		{
 			return View();
