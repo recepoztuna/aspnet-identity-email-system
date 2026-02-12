@@ -1,0 +1,228 @@
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Project2EmailNight.Entities.AppUser> UserManager
+
+@model Project2EmailNight.Entities.Message
+@{
+    ViewData["Title"] = Model.Subject;
+    var currentUserId = UserManager.GetUserId(User);
+    var isSender = Model.SenderId == currentUserId;
+    var displayUser = isSender ? Model.Receiver : Model.Sender;
+    var displayUserInitials = $"{displayUser?.FirstName?.Substring(0, 1)}{displayUser?.LastName?.Substring(0, 1)}".ToUpper();
+}
+
+<div class="page-wrapper">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+
+           
+            <!-- Email Detail Card -->
+            <div class="email-detail-wrapper p-4">
+                <div class="email-detail-card bg-white rounded-3 shadow-sm">
+                    <!-- Header -->
+                    <div class="email-detail-header p-4 border-bottom">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <!-- Geri -->
+                                <a href="javascript:history.back()" class="btn btn-sm btn-light">
+                                    <i class='bx bx-arrow-back'></i>
+                                </a>
+                                <!-- Yıldız -->
+                                <button type="button" class="btn btn-sm btn-light" id="toggleStar" data-id="@Model.Id">
+                                    <i class='bx @(Model.IsStarred ? "bxs-star text-warning" : "bx-star")'></i>
+                                </button>
+                                <!-- Sil -->
+                                <button type="button" class="btn btn-sm btn-light text-danger" id="deleteMessage" data-id="@Model.Id">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                            <div>
+                                <!-- Yanıtla -->
+                                <button type="button" class="btn btn-sm btn-primary"
+                                        onclick="openComposeModal('@displayUser.Email', 'Re: @Model.Subject')">
+                                    <i class='bx bx-reply me-1'></i>Yanıtla
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="mb-0">@Model.Subject</h3>
+                    </div>
+
+                    <!-- Sender Info -->
+                    <div class="email-sender-info p-4 border-bottom bg-light">
+                        <div class="d-flex align-items-start">
+                            <!-- Avatar -->
+                            <div class="user-avatar-large bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 56px; height: 56px; font-size: 20px; font-weight: bold; flex-shrink: 0;">
+                                @displayUserInitials
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div>
+                                        <h5 class="mb-1">@displayUser.FirstName @displayUser.LastName</h5>
+                                        <p class="text-muted mb-0">
+                                            <i class='bx bx-envelope me-1'></i>@displayUser.Email
+                                        </p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-dark">
+                                            <i class='bx bx-calendar me-1'></i>
+                                            @Model.SentDate.ToString("dd MMMM yyyy")
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class='bx bx-time me-1'></i>
+                                            @Model.SentDate.ToString("HH:mm")
+                                        </small>
+                                    </div>
+                                </div>
+
+                                @if (Model.MessageCategories.Any())
+                                {
+                                    <div class="mt-3">
+                                        <small class="text-muted me-2">
+                                            <i class='bx bx-tag'></i> Kategoriler:
+                                        </small>
+                                        @foreach (var mc in Model.MessageCategories)
+                                        {
+                                            <span class="badge bg-primary text-white me-1">
+                                                @mc.Category.Name
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message Body -->
+                    <div class="email-body-content p-5">
+                        <div class="message-text">
+                            @Html.Raw(Model.Body?.Replace("\n", "<br>"))
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Yıldız Toggle
+            $('#toggleStar').on('click', function() {
+                var messageId = $(this).data('id');
+                var $icon = $(this).find('i');
+
+                $.post('/Email/ToggleStar', { id: messageId }, function(result) {
+                    if (result.success) {
+                        $icon.toggleClass('bx-star bxs-star text-warning');
+                    } else {
+                        alert(result.message || 'İşlem başarısız');
+                    }
+                }).fail(function() {
+                    alert('Bir hata oluştu');
+                });
+            });
+
+            // Mesajı Sil
+            $('#deleteMessage').on('click', function() {
+                if (!confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+                    return;
+                }
+
+                var messageId = $(this).data('id');
+
+                $.post('/Email/Delete', { id: messageId }, function(result) {
+                    if (result.success) {
+                        window.history.back();
+                    } else {
+                        alert(result.message || 'İşlem başarısız');
+                    }
+                }).fail(function() {
+                    alert('Bir hata oluştu');
+                });
+            });
+        });
+    </script>
+
+    <style>
+        /* BOŞLUKLARI TAMAMEN KALDIR */
+        .page-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .page-content-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .page-content {
+            padding: 0 !important;
+            margin: 0 !important;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* DETAIL WRAPPER */
+        .email-detail-wrapper {
+            max-width: 100%;
+            margin: 0 !important;
+            margin-top: 70px !important;
+            margin-left: 20px !important; /* Header'dan boşluk */
+            padding: 20px !important;
+        }
+
+        /* DETAIL CARD */
+        .email-detail-card {
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .email-detail-header h3 {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        /* SENDER INFO */
+        .email-sender-info {
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+        }
+
+        .user-avatar-large {
+            box-shadow: 0 2px 8px rgba(101, 113, 255, 0.2);
+        }
+
+        /* MESSAGE BODY */
+        .email-body-content {
+            min-height: 300px;
+            background-color: #ffffff;
+        }
+
+        .message-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        /* BUTONLAR */
+        .btn-light {
+            border: 1px solid #e2e8f0;
+        }
+
+            .btn-light:hover {
+                background-color: #f7fafc;
+                border-color: #cbd5e0;
+            }
+
+        /* BADGE */
+        .badge {
+            font-weight: 500;
+            padding: 6px 12px;
+        }
+    </style>
+}

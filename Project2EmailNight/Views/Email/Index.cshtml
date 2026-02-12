@@ -12,27 +12,27 @@
 <div class="page-wrapper">
     <div class="page-content-wrapper">
         <div class="page-content">
-            
-           
-                <!-- Email Header (Üst Araç Çubuğu) -->
-                <div class="email-header d-xl-flex align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="email-toggle-btn"><i class='bx bx-menu'></i></div>
-                        <div class="btn btn-white">
-                            <input class="form-check-input" type="checkbox" id="selectAll">
-                        </div>
-                        <button type="button" class="btn btn-white ms-2"><i class='bx bx-refresh me-0'></i></button>
-                        <button type="button" class="btn btn-white ms-2"><i class='bx bx-trash me-0'></i></button>
-                    </div>
 
-                    <div class="flex-grow-1 mx-xl-2 my-2 my-xl-0">
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent"><i class="bx bx-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Mesaj ara...">
-                        </div>
-                    </div>
 
-                    <div class="ms-auto d-flex align-items-center">
+            <!-- Email Header (Üst Araç Çubuğu) -->
+            <div class="email-header d-xl-flex align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="email-toggle-btn"><i class='bx bx-menu'></i></div>
+                    <div class="btn btn-white">
+                        <input class="form-check-input" type="checkbox" id="selectAll">
+                    </div>
+                    <button type="button" class="btn btn-white ms-2"><i class='bx bx-refresh me-0'></i></button>
+                    <button type="button" class="btn btn-white ms-2" id="deleteSelected" title="Seçilenleri Sil">
+                        <i class='bx bx-trash me-0'></i>
+                    </button>
+                </div>
+                <div class="flex-grow-1 mx-xl-2 my-2 my-xl-0">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent"><i class="bx bx-search"></i></span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Mesaj ara...">
+                    </div>
+                </div>
+                <div class="ms-auto d-flex align-items-center">
                     <button class="btn btn-sm btn-light">@pagedMessages.Count mesaj</button>
                     <a asp-action="Index" asp-route-page="@(currentPage - 1)"
                        class="btn btn-white px-2 ms-2 @(currentPage == 1 ? "disabled" : "")">
@@ -42,8 +42,8 @@
                        class="btn btn-white px-2 ms-2 @(currentPage >= totalPages ? "disabled" : "")">
                         <i class='bx bx-chevron-right me-0'></i>
                     </a>
-                    </div>
                 </div>
+            </div>
 
                 <!-- Email Content (Mesaj Listesi) -->
                 <div class="email-content">
@@ -68,12 +68,19 @@
                                 <!-- Mesaj İçeriği (Tıklanabilir) -->
                                 <a href="@Url.Action("Read", new { id = message.Id })" class="flex-grow-1 text-decoration-none text-dark email-message-content">
                                     <div class="d-flex align-items-center w-100">
-                                        <!-- Gönderen Adı -->
-                                        <div class="sender-name me-3" style="min-width: 150px;">
-                                            <span class="@(message.IsRead ? "" : "fw-bold")">
-                                                @message.Sender.FirstName @message.Sender.LastName
-                                            </span>
-                                        </div>
+                                    <!-- Gönderen/Alıcı Adı -->
+                                    <div class="sender-name me-3" style="min-width: 150px;">
+                                        <span class="@(message.IsRead ? "" : "fw-bold")">
+                                            @if (ViewData["IsSentPage"] != null || ViewData["IsDraftPage"] != null)
+                                            {
+                                                @message.Receiver?.FirstName @message.Receiver?.LastName
+                                            }
+                                            else
+                                            {
+                                                @message.Sender?.FirstName @message.Sender?.LastName
+                                            }
+                                        </span>
+                                    </div>
                                     <!-- Konu (Ayrı Sütun - Kalın) -->
                                     <div class="message-subject me-3" style="min-width: 200px;">
                                         <span class="fw-bold">@message.Subject</span>
@@ -103,22 +110,24 @@
                                 </a>
 
                                 <!-- Hızlı Aksiyonlar (Hover'da Görünür) -->
-                                <div class="email-quick-actions ms-3 flex-shrink-0">
-                                    <!-- Mesaj Gönder -->
-                                    <a href="@Url.Action("Compose", new { to = message.Sender.Email })"
-                                       class="btn btn-sm btn-light me-1"
-                                       title="Yanıtla">
-                                        <i class='bx bx-mail-send'></i>
-                                    </a>
+                            <!-- Hızlı Aksiyonlar (Hover'da Görünür) -->
+                            <div class="email-quick-actions ms-3 flex-shrink-0">
+                                <!-- Yanıtla -->
+                                <button type="button"
+                                        class="btn btn-sm btn-light me-1"
+                                        onclick="openComposeModal('@message.Sender.Email', 'Re: @message.Subject')"
+                                        title="Yanıtla">
+                                    <i class='bx bx-mail-send'></i>
+                                </button>
 
-                                    <!-- Sil -->
-                                    <button type="button"
-                                            class="btn btn-sm btn-light btn-delete-message"
-                                            data-id="@message.Id"
-                                            title="Sil">
-                                        <i class='bx bx-trash'></i>
-                                    </button>
-                                </div>
+                                <!-- Sil -->
+                                <button type="button"
+                                        class="btn btn-sm btn-light btn-delete-message"
+                                        data-id="@message.Id"
+                                        title="Sil">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
                             </div>
                         }
                     </div>
@@ -250,5 +259,183 @@
 
 
     </style>
+    <script>
+        $(document).ready(function() {
+            // ========================================
+            // HEPSINI SEÇ/KALDIR
+            // ========================================
+            $('#selectAll').on('change', function() {
+                var isChecked = $(this).is(':checked');
+                $('.message-checkbox').prop('checked', isChecked);
+            });
+
+            // Tek checkbox değiştiğinde "Hepsini Seç" checkbox'ını güncelle
+            $(document).on('change', '.message-checkbox', function() {
+                var totalCheckboxes = $('.message-checkbox').length;
+                var checkedCheckboxes = $('.message-checkbox:checked').length;
+                $('#selectAll').prop('checked', totalCheckboxes === checkedCheckboxes);
+            });
+
+            // ========================================
+            // ARAMA
+            // ========================================
+            var searchTimeout;
+            $('#searchInput').on('keyup', function() {
+                clearTimeout(searchTimeout);
+                var query = $(this).val().trim();
+
+                if (query.length === 0) {
+                    // Boşsa sayfayı yenile
+                    location.reload();
+                    return;
+                }
+
+                if (query.length < 2) {
+                    return; // En az 2 karakter
+                }
+
+                searchTimeout = setTimeout(function() {
+                    $.post('/Email/Search', { query: query }, function(result) {
+                        if (result.success) {
+                            displaySearchResults(result.results);
+                        } else {
+                            alert(result.message || 'Arama başarısız');
+                        }
+                    }).fail(function() {
+                        alert('Arama sırasında hata oluştu');
+                    });
+                }, 500); // 500ms bekle
+            });
+
+            // Arama sonuçlarını göster
+            function displaySearchResults(results) {
+                var $emailList = $('.email-list');
+                $emailList.empty();
+
+                if (results.length === 0) {
+                    $emailList.html('<div class="text-center py-5"><i class="bx bx-search-alt font-30 text-muted"></i><p class="text-muted mt-2">Sonuç bulunamadı</p></div>');
+                    return;
+                }
+
+                results.forEach(function(msg) {
+                    var date = new Date(msg.sentDate);
+                    var today = new Date();
+                    var dateText = '';
+
+                    if (date.toDateString() === today.toDateString()) {
+                        dateText = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                    } else if (date.toDateString() === new Date(today.setDate(today.getDate() - 1)).toDateString()) {
+                        dateText = 'Dün';
+                    } else {
+                        dateText = date.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
+                    }
+
+                    var html = `
+                        <div class="email-message-row d-flex align-items-center px-3 py-2 ${msg.isRead ? '' : 'bg-body'} position-relative">
+                            <input class="form-check-input flex-shrink-0 message-checkbox" type="checkbox" value="${msg.id}" />
+                            <i class='bx ${msg.isStarred ? 'bxs-star text-warning' : 'bx-star'} font-20 mx-2 email-star cursor-pointer flex-shrink-0' data-id="${msg.id}"></i>
+                            <div class="user-avatar flex-shrink-0 me-3 bg-primary">${msg.senderInitials}</div>
+                            <a href="/Email/Read/${msg.id}" class="flex-grow-1 text-decoration-none text-dark email-message-content">
+                                <div class="d-flex align-items-center w-100">
+                                    <div class="sender-name me-3" style="min-width: 150px;">
+                                        <span class="${msg.isRead ? '' : 'fw-bold'}">${msg.senderName}</span>
+                                    </div>
+                                    <div class="message-subject me-3" style="min-width: 200px;">
+                                        <span class="fw-bold">${msg.subject}</span>
+                                    </div>
+                                    <div class="message-preview flex-grow-1 text-muted">${msg.body}</div>
+                                    <div class="email-time text-muted ms-3" style="min-width: 80px; text-align: right;">${dateText}</div>
+                                </div>
+                            </a>
+                            <div class="email-quick-actions ms-3 flex-shrink-0">
+                                <button type="button" class="btn btn-sm btn-light btn-delete-message" data-id="${msg.id}" title="Sil">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    $emailList.append(html);
+                });
+            }
+
+            // ========================================
+            // TOPLU SİLME
+            // ========================================
+            $('#deleteSelected').on('click', function() {
+                var selectedIds = [];
+                $('.message-checkbox:checked').each(function() {
+                    selectedIds.push(parseInt($(this).val()));
+                });
+
+                if (selectedIds.length === 0) {
+                    alert('Lütfen silinecek mesajları seçin');
+                    return;
+                }
+
+                if (!confirm(selectedIds.length + ' mesajı silmek istediğinizden emin misiniz?')) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Email/DeleteMultiple',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(selectedIds),
+                    success: function(result) {
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            alert(result.message || 'Silme başarısız');
+                        }
+                    },
+                    error: function() {
+                        alert('Silme sırasında hata oluştu');
+                    }
+                });
+            });
+
+            // ========================================
+            // YILDIZ TOGGLE
+            // ========================================
+            $(document).on('click', '.email-star', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var messageId = $(this).data('id');
+                var $star = $(this);
+
+                $.post('/Email/ToggleStar', { id: messageId }, function(result) {
+                    if (result.success) {
+                        $star.toggleClass('bx-star bxs-star text-warning');
+                    } else {
+                        alert(result.message || 'İşlem başarısız');
+                    }
+                }).fail(function() {
+                    alert('Bir hata oluştu');
+                });
+            });
+
+            // ========================================
+            // TEK SİLME
+            // ========================================
+            $(document).on('click', '.btn-delete-message', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+                    var messageId = $(this).data('id');
+
+                    $.post('/Email/Delete', { id: messageId }, function(result) {
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            alert(result.message || 'İşlem başarısız');
+                        }
+                    }).fail(function() {
+                        alert('Bir hata oluştu');
+                    });
+                }
+            });
+        });
+    </script>
 }
 

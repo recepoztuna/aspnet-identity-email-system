@@ -1,0 +1,383 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    var stats = (dynamic)ViewData["Stats"];
+    var categoryStats = ViewData["CategoryStats"] as List<dynamic>;
+    var recentMessages = ViewData["RecentMessages"] as List<Project2EmailNight.Entities.Message>;
+}
+
+<div class="page-wrapper">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+
+            <!-- Page Header -->
+            <div class="page-breadcrumb d-flex align-items-center mb-3">
+                <div class="breadcrumb-title pe-3">Anasayfa</div>
+                <div class="ps-3">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 p-0">
+                            <li class="breadcrumb-item"><a href="javascript:;"><i class='bx bx-home-alt'></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">İstatistikler</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- 8 Widget Cards -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+                <!-- Widget 1: Toplam Mesaj -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Toplam Mesaj</p>
+                                    <h4 class="my-1 text-primary">@stats.TotalMessages</h4>
+                                    <p class="mb-0 font-13 text-success">
+                                        <i class='bx bxs-up-arrow align-middle'></i>Tüm Zamanlar
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large bg-gradient-primary text-white ms-auto">
+                                    <i class='bx bx-mail-send'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 2: Gelen Mesajlar -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Gelen Kutusu</p>
+                                    <h4 class="my-1 text-info">@stats.InboxCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-envelope align-middle'></i>Alınan
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large bg-gradient-info text-white ms-auto">
+                                    <i class='bx bx-inbox'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 3: Gönderilen -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Gönderilen</p>
+                                    <h4 class="my-1 text-success">@stats.SentCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-send align-middle'></i>Giden
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large bg-gradient-success text-white ms-auto">
+                                    <i class='bx bx-paper-plane'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 4: Okunmamış -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Okunmamış</p>
+                                    <h4 class="my-1 text-warning">@stats.UnreadCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-envelope-open align-middle'></i>Yeni
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large bg-gradient-warning text-white ms-auto">
+                                    <i class='bx bxs-envelope'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 5: Yıldızlı -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Yıldızlı</p>
+                                    <h4 class="my-1" style="color: #ffc107;">@stats.StarredCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bxs-star align-middle'></i>Önemli
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large text-white ms-auto" style="background: linear-gradient(to right, #ffc107, #ff9800);">
+                                    <i class='bx bxs-star'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 6: Taslaklar -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Taslaklar</p>
+                                    <h4 class="my-1 text-secondary">@stats.DraftCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-edit align-middle'></i>Bekliyor
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large bg-gradient-secondary text-white ms-auto">
+                                    <i class='bx bx-file'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 7: Kategoriler -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Kategoriler</p>
+                                    <h4 class="my-1" style="color: #9c27b0;">@stats.CategoryCount</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-tag align-middle'></i>Etiket
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large text-white ms-auto" style="background: linear-gradient(to right, #9c27b0, #673ab7);">
+                                    <i class='bx bx-purchase-tag'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 8: Bugün Gelen -->
+                <div class="col">
+                    <div class="card radius-10">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Bugün Gelen</p>
+                                    <h4 class="my-1" style="color: #00bcd4;">@stats.TodayMessages</h4>
+                                    <p class="mb-0 font-13">
+                                        <i class='bx bx-calendar align-middle'></i>Yeni
+                                    </p>
+                                </div>
+                                <div class="widget-icon-large text-white ms-auto" style="background: linear-gradient(to right, #00bcd4, #0097a7);">
+                                    <i class='bx bx-calendar-check'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori İstatistikleri -->
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="card radius-10">
+                        <div class="card-header bg-transparent">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h6 class="mb-0">Kategoriye Göre Mesajlar</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (categoryStats != null && categoryStats.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-borderless mb-0">
+                                        <tbody>
+                                            @foreach (var cat in categoryStats)
+                                            {
+                                                var percentage = stats.TotalMessages > 0
+                                                ? Math.Round(cat.MessageCount * 100.0 / stats.TotalMessages, 1)
+                                                : 0;
+
+                                                var colorClass = cat.CategoryName switch
+                                                {
+                                                    "İş" => "bg-primary",
+                                                    "Önemli" => "bg-danger",
+                                                    "Projeler" => "bg-warning",
+                                                    "Sosyal" => "bg-info",
+                                                    _ => "bg-secondary"
+                                                };
+
+                                                <tr>
+                                                    <td class="fw-bold">@cat.CategoryName</td>
+                                                    <td>@cat.MessageCount mesaj</td>
+                                                    <td class="w-50">
+                                                        <div class="progress" style="height:10px;">
+                                                            <div class="progress-bar @colorClass"
+                                                                 style="width:@percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-end text-muted">% @percentage</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class='bx bx-tag font-30 text-muted'></i>
+                                    <p class="text-muted mt-2">Henüz kategori yok</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Son Mesajlar -->
+                <div class="col-12 col-xl-6">
+                    <div class="card radius-10">
+                        <div class="card-header bg-transparent">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h6 class="mb-0">Son Mesajlar</h6>
+                                </div>
+                                <div class="ms-auto">
+                                    <a asp-controller="Email" asp-action="Index" class="btn btn-sm btn-primary">
+                                        Tümünü Gör
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (recentMessages != null && recentMessages.Any())
+                            {
+                                <div class="list-group list-group-flush">
+                                    @foreach (var msg in recentMessages)
+                                    {
+                                        var initials = $"{msg.Sender?.FirstName?.Substring(0, 1)}{msg.Sender?.LastName?.Substring(0, 1)}".ToUpper();
+                                        <a asp-controller="Email" asp-action="Read" asp-route-id="@msg.Id"
+                                           class="list-group-item list-group-item-action border-0">
+                                            <div class="d-flex align-items-center">
+                                                <div class="user-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                     style="width: 40px; height: 40px; font-size: 14px; font-weight: bold; flex-shrink: 0;">
+                                                    @initials
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0 @(msg.IsRead ? "" : "fw-bold")">
+                                                        @msg.Sender?.FirstName @msg.Sender?.LastName
+                                                    </h6>
+                                                    <p class="mb-0 text-muted small">
+                                                        @(msg.Subject?.Length > 40 ? msg.Subject.Substring(0, 40) + "..." : msg.Subject)
+                                                    </p>
+                                                </div>
+                                                <div class="text-end">
+                                                    <small class="text-muted">@msg.SentDate.ToString("dd MMM")</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class='bx bx-envelope font-30 text-muted'></i>
+                                    <p class="text-muted mt-2">Henüz mesaj yok</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <style>
+        /* BOŞLUKLARI AGRESIF DÜZELT */
+        body .page-wrapper {
+            padding: 0 !important;
+            margin-left: 120px !important;
+            margin-top: 20px !important;
+        }
+
+        body .page-content-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+            margin-left: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        body .page-content {
+            padding: 20px !important;
+            margin: 0 !important;
+            margin-left: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* BREADCRUMB BOŞLUĞU AZALT */
+        .page-breadcrumb {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        /* WIDGET ROW BOŞLUKLARI */
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* WIDGET STYLES */
+        .widget-icon-large {
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border-radius: 10px;
+        }
+
+        .radius-10 {
+            border-radius: 10px;
+        }
+
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 20px;
+        }
+
+        /* USER AVATAR */
+        .user-avatar {
+            flex-shrink: 0;
+        }
+
+        /* LIST GROUP */
+        .list-group-item {
+            transition: background-color 0.2s;
+        }
+
+            .list-group-item:hover {
+                background-color: #f8f9fa;
+            }
+    </style>
+}

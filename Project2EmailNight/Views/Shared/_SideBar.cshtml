@@ -6,7 +6,7 @@
             <img src="~/assets/images/logo-icon.png" class="logo-icon-2" alt="" />
         </div>
         <div>
-            <h4 class="logo-text">EmailApp</h4>
+            <h4 class="logo-text">Posta Kutu </h4>
         </div>
         <a href="javascript:;" class="toggle-btn ms-auto">
             <i class="bx bx-menu"></i>
@@ -16,90 +16,255 @@
     <!--navigation-->
     <ul class="metismenu" id="menu">
         <!-- Yeni Email Butonu -->
-        <li>
-            <a href="/Email/Compose" class="has-arrow">
-                <div class="parent-icon icon-color-1">
-                    <i class="bx bx-edit-alt"></i>
-                </div>
-                <div class="menu-title">Yeni Email</div>
-            </a>
+        <li class="nav-item px-3 py-2">
+            <button type="button" class="btn btn-compose w-100 rounded-3" onclick="openComposeModal()">
+                <i class='bx bx-edit-alt me-2'></i>Mesaj Yaz
+            </button>
         </li>
 
         <!-- Email Klasörleri -->
         <li class="menu-label">Klasörler</li>
-
         <li>
-            <a href="/Email/Inbox">
-                <div class="parent-icon icon-color-2">
-                    <i class="bx bx-envelope"></i>
+            <a asp-controller="Email" asp-action="Index" class="sidebar-link">
+                <div class="parent-icon">
+                    <i class="bx bx-envelope text-primary"></i>
                 </div>
                 <div class="menu-title">Gelen Kutusu</div>
-                <div class="ms-auto">
-                    <span class="badge rounded-pill bg-primary">12</span>
-                </div>
+                @if ((int)(ViewData["InboxCount"] ?? 0) > 0)
+                {
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill badge-light-blue">@ViewData["InboxCount"]</span>
+                    </div>
+                }
             </a>
         </li>
-
         <li>
-            <a href="/Email/Starred">
-                <div class="parent-icon icon-color-3">
-                    <i class="bx bx-star"></i>
+            <a asp-controller="Email" asp-action="Starred" class="sidebar-link">
+                <div class="parent-icon">
+                    <i class="bx bx-star text-primary"></i>
                 </div>
                 <div class="menu-title">Yıldızlı</div>
+                @if ((int)(ViewData["StarredCount"] ?? 0) > 0)
+                {
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill badge-light-blue">@ViewData["StarredCount"]</span>
+                    </div>
+                }
             </a>
         </li>
-
         <li>
-            <a href="/Email/Sent">
-                <div class="parent-icon icon-color-4">
-                    <i class="bx bx-send"></i>
+            <a asp-controller="Email" asp-action="Sent" class="sidebar-link">
+                <div class="parent-icon">
+                    <i class="bx bx-send text-primary"></i>
                 </div>
                 <div class="menu-title">Gönderilenler</div>
+                @if ((int)(ViewData["SentCount"] ?? 0) > 0)
+                {
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill badge-light-blue">@ViewData["SentCount"]</span>
+                    </div>
+                }
             </a>
         </li>
-
         <li>
-            <a href="/Email/Draft">
-                <div class="parent-icon icon-color-5">
-                    <i class="bx bx-edit"></i>
+            <a asp-controller="Email" asp-action="Draft" class="sidebar-link">
+                <div class="parent-icon">
+                    <i class="bx bx-edit text-primary"></i>
                 </div>
                 <div class="menu-title">Taslaklar</div>
-                <div class="ms-auto">
-                    <span class="badge rounded-pill bg-secondary">5</span>
-                </div>
+                @if ((int)(ViewData["DraftCount"] ?? 0) > 0)
+                {
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill badge-light-blue">@ViewData["DraftCount"]</span>
+                    </div>
+                }
             </a>
         </li>
-
         <li>
-            <a href="/Email/Trash">
-                <div class="parent-icon icon-color-6">
-                    <i class="bx bx-trash"></i>
+            <a asp-controller="Email" asp-action="Trash" class="sidebar-link">
+                <div class="parent-icon">
+                    <i class="bx bx-trash text-primary"></i>
                 </div>
                 <div class="menu-title">Çöp Kutusu</div>
+                @if ((int)(ViewData["TrashCount"] ?? 0) > 0)
+                {
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill badge-light-blue">@ViewData["TrashCount"]</span>
+                    </div>
+                }
             </a>
         </li>
-
         <!-- Kategoriler -->
-        <li class="menu-label">Kategoriler</li>
+        <!-- Kategoriler -->
+        <li class="menu-label">KATEGORİLER</li>
 
-        <li>
-            <a href="/Email/Unread">
-                <div class="parent-icon icon-color-7">
-                    <i class="bx bx-envelope-open"></i>
-                </div>
-                <div class="menu-title">Okunmamış</div>
-            </a>
-        </li>
+        @{
+            var categories = ViewData["UserCategories"] as List<Project2EmailNight.Entities.Category> ?? new List<Project2EmailNight.Entities.Category>();
 
-        <li>
-            <a href="/Email/Important">
-                <div class="parent-icon icon-color-8">
-                    <i class="bx bx-flag"></i>
-                </div>
-                <div class="menu-title">Önemli</div>
-            </a>
-        </li>
+            // Kategori iconları
+            var categoryIcons = new Dictionary<string, string>
+                {
+                { "İş", "bx-briefcase" },
+                { "Kişisel", "bx-user" },
+                { "Önemli", "bx-flag" },
+                { "Projeler", "bx-folder" },
+                { "Faturalar", "bx-receipt" },
+                { "Sosyal", "bx-group" },
+                { "Alışveriş", "bx-cart" },
+                { "Seyahat", "bx-trip" },
+                { "Sağlık", "bx-plus-medical" },
+                { "Eğitim", "bx-book" }
+                };
+        }
+
+        @foreach (var category in categories)
+        {
+            var icon = categoryIcons.ContainsKey(category.Name) ? categoryIcons[category.Name] : "bx-tag";
+
+            <li>
+                <a asp-controller="Email" asp-action="Category" asp-route-id="@category.Id" class="sidebar-link">
+                    <div class="parent-icon">
+                        <i class="bx @icon text-primary"></i>
+                    </div>
+                    <div class="menu-title">@category.Name</div>
+                </a>
+            </li>
+        }
+
+        @if (!categories.Any())
+        {
+            <li class="text-center text-muted py-2">
+                <small>Henüz kategori yok</small>
+            </li>
+        }
     </ul>
     <!--end navigation-->
 </div>
-<!--end sidebar-wrapper-->
+<text>
+    <style>
+        /* MESAJ YAZ BUTONU */
+        .btn-compose {
+            background-color: #6571ff !important;
+            color: white !important;
+            border: 2px solid #6571ff !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .btn-compose:hover {
+                background-color: white !important;
+                color: #6571ff !important;
+                border: 2px solid #6571ff !important;
+            }
+
+            .btn-compose i {
+                color: inherit !important;
+                transition: all 0.3s ease;
+            }
+
+        /* SECTION BAŞLIKLARI (KLASÖRLER / KATEGORİLER) */
+        .menu-label {
+            padding: 15px 20px 5px 20px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #6571ff !important;
+            opacity: 0.65;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-top: 10px;
+        }
+
+        /* SIDEBAR İTEMLARI */
+        .metismenu > li > a {
+            padding: 10px 15px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+            /* HOVER EFEKTİ */
+            .metismenu > li > a:hover {
+                background-color: rgba(255, 255, 255, 0.08) !important;
+                border-left-color: #6571ff;
+            }
+
+            /* AKTİF İTEM */
+            .metismenu > li > a.mm-active,
+            .metismenu > li.mm-active > a {
+                background-color: rgba(255, 255, 255, 0.12) !important;
+                border-left: 3px solid #6571ff !important;
+            }
+
+        /* KLASÖRLER - KALIN YAZI */
+        .metismenu > li:nth-child(2) > a,
+        .metismenu > li:nth-child(3) > a,
+        .metismenu > li:nth-child(4) > a,
+        .metismenu > li:nth-child(5) > a,
+        .metismenu > li:nth-child(6) > a,
+        .metismenu > li:nth-child(7) > a {
+            font-weight: 600;
+        }
+
+        /* KATEGORİLER - NORMAL YAZI + İÇERDEN BAŞLA */
+        .menu-label + li > a,
+        .menu-label ~ li > a {
+            font-weight: 400;
+            padding-left: 25px;
+        }
+
+        /* BADGE'LER - SADECE GELEN KUTUSU RENKLİ */
+        .badge-light-blue {
+            background-color: #a8b0ff !important;
+            color: white !important;
+            font-size: 10px;
+            padding: 3px 8px;
+        }
+
+        /* DİĞER BADGE'LER GRİ */
+        .metismenu > li:not(:nth-child(3)) .badge-light-blue {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* İKONLAR - OUTLINE VARSAYILAN */
+        .metismenu > li > a .parent-icon i {
+            transition: all 0.2s ease;
+        }
+
+        /* AKTİF İTEM İKONU - FILLED */
+        .metismenu > li.mm-active > a .bx-envelope:before {
+            content: "\ec89"; /* bxs-envelope */
+        }
+
+        .metismenu > li.mm-active > a .bx-star:before {
+            content: "\eedf"; /* bxs-star */
+        }
+
+        .metismenu > li.mm-active > a .bx-send:before {
+            content: "\ee9f"; /* bxs-send */
+        }
+
+        .metismenu > li.mm-active > a .bx-edit:before {
+            content: "\ec3c"; /* bxs-edit */
+        }
+
+        .metismenu > li.mm-active > a .bx-trash:before {
+            content: "\ef13"; /* bxs-trash */
+        }
+
+        .metismenu > li.mm-active > a .bx-briefcase:before {
+            content: "\eba5"; /* bxs-briefcase */
+        }
+
+        .metismenu > li.mm-active > a .bx-user:before {
+            content: "\ef2d"; /* bxs-user */
+        }
+
+        .metismenu > li.mm-active > a .bx-flag:before {
+            content: "\ec51"; /* bxs-flag */
+        }
+
+        .metismenu > li.mm-active > a .bx-folder:before {
+            content: "\ec5f"; /* bxs-folder */
+        }
+    </style>
+</text>

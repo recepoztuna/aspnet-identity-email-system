@@ -13,22 +13,69 @@
         ? $"{currentUser.FirstName?.Substring(0, 1)}{currentUser.LastName?.Substring(0, 1)}".ToUpper()
         : "??";
 
-    // OKUNMAMIŞ MESAJLARI ÇEK
+    // TÜM SAYILARI HESAPLA
     var unreadMessages = new List<Message>();
+    int inboxCount = 0;
+    int starredCount = 0;
+    int sentCount = 0;
+    int draftCount = 0;
+    int trashCount = 0;
+
     if (currentUser != null)
     {
         var serviceProvider = ViewContext.HttpContext.RequestServices;
         var dbContext = serviceProvider.GetRequiredService<EmailContext>();
 
+        // Okunmamış mesajlar (dropdown için)
         unreadMessages = dbContext.Messages
-            .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead && !m.IsDeletedByReceiver)
+            .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead && !m.IsDeletedByReceiver && !m.IsDraft)
             .OrderByDescending(m => m.SentDate)
             .Take(5)
             .Include(m => m.Sender)
             .ToList();
+
+        // Gelen Kutusu
+        inboxCount = dbContext.Messages
+            .Count(m => m.ReceiverId == currentUser.Id && !m.IsDeletedByReceiver && !m.IsDraft);
+
+        // Yıldızlı
+        starredCount = dbContext.Messages
+            .Count(m => m.ReceiverId == currentUser.Id && m.IsStarred && !m.IsDeletedByReceiver);
+
+        // Gönderilenler
+        sentCount = dbContext.Messages
+            .Count(m => m.SenderId == currentUser.Id && !m.IsDraft && !m.IsDeletedBySender);
+
+        // Taslaklar
+        draftCount = dbContext.Messages
+            .Count(m => m.SenderId == currentUser.Id && m.IsDraft && !m.IsDeletedBySender);
+
+        // Çöp Kutusu
+        trashCount = dbContext.Messages
+            .Count(m => (m.ReceiverId == currentUser.Id && m.IsDeletedByReceiver)
+                     || (m.SenderId == currentUser.Id && m.IsDeletedBySender));
     }
+    // Kategorileri çek
+    var userCategories = new List<Category>();
+    if (currentUser != null)
+    {
+        var serviceProvider = ViewContext.HttpContext.RequestServices;
+        var dbContext = serviceProvider.GetRequiredService<EmailContext>();
+
+        userCategories = dbContext.Categories
+            .Where(c => c.UserId == currentUser.Id)
+            .OrderBy(c => c.Name)
+            .ToList();
+    }
+    ViewData["UserCategories"] = userCategories;
+
     ViewData["UnreadMessages"] = unreadMessages;
     ViewData["UnreadCount"] = unreadMessages.Count;
+    ViewData["InboxCount"] = inboxCount;
+    ViewData["StarredCount"] = starredCount;
+    ViewData["SentCount"] = sentCount;
+    ViewData["DraftCount"] = draftCount;
+    ViewData["TrashCount"] = trashCount;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +93,8 @@
     <link rel="stylesheet" href="~/assets/css/app.css" />
     <link rel="stylesheet" href="~/assets/css/dark-sidebar.css" />
     <link rel="stylesheet" href="~/assets/css/dark-theme.css" />
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -103,6 +152,127 @@
     <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
     <script src="~/assets/js/app.js"></script>
 
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Compose Modal -->
+    <div class="modal fade" id="composeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class='bx bx-envelope me-2'></i>Yeni Mesaj
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="composeForm">
+                        <!-- Alıcı -->
+                        <div class="mb-3">
+                            <label class="form-label">Alıcı</label>
+                            <input type="email" class="form-control" id="composeTo" name="to" placeholder="email@example.com" required>
+                        </div>
+
+                        <!-- Konu -->
+                        <div class="mb-3">
+                            <label class="form-label">Konu</label>
+                            <input type="text" class="form-control" id="composeSubject" name="subject" placeholder="Mesaj konusu" required>
+                        </div>
+
+                        <!-- Mesaj -->
+                        <div class="mb-3">
+                            <label class="form-label">Mesaj</label>
+                            <textarea id="composeBody" name="body"></textarea>
+                        </div>
+
+                        <!-- Kategoriler -->
+                        <div class="mb-3">
+                            <label class="form-label">Kategoriler (İsteğe bağlı)</label>
+                            <select class="form-select" id="composeCategories" name="categories" multiple>
+                                @foreach (var cat in userCategories)
+                                {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                            <small class="text-muted">Ctrl/Cmd tuşu ile birden fazla seçebilirsiniz</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class='bx bx-x me-1'></i>İptal
+                    </button>
+                    <button type="button" class="btn btn-primary" id="sendMessageBtn">
+                        <i class='bx bx-send me-1'></i>Gönder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+               // Summernote başlat
+        $(document).ready(function() {
+            $('#composeBody').summernote({
+                height: 250,
+                placeholder: 'Mesajınızı yazın...',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+        });
+
+        // Modal açma fonksiyonu
+        function openComposeModal(to = '', subject = '') {
+            $('#composeTo').val(to);
+            $('#composeSubject').val(subject);
+            $('#composeBody').summernote('code', ''); // Rich text temizle
+            $('#composeCategories').val([]);
+            $('#composeModal').modal('show');
+        }
+
+        // Mesaj gönder
+        $(document).ready(function() {
+            $('#sendMessageBtn').on('click', function() {
+                       var formData = {
+            to: $('#composeTo').val(),
+            subject: $('#composeSubject').val(),
+            body: $('#composeBody').summernote('code'), // Rich text içeriğini al
+            categories: $('#composeCategories').val() || []
+        };
+
+                if (!formData.to || !formData.subject || !formData.body) {
+                    alert('Lütfen tüm alanları doldurun');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Email/Compose',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(result) {
+                        if (result.success) {
+                            $('#composeModal').modal('hide');
+                            alert('Mesaj başarıyla gönderildi!');
+                            location.reload();
+                        } else {
+                            alert(result.message || 'Gönderim başarısız');
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu');
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>
