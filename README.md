@@ -10,7 +10,7 @@
 
 **Modern, hızlı ve güvenli email yönetim platformu**
 
-![Landing Page](screenshots/Giriş.jpg)
+![Landing Page](screenshots/landing-page.jpg)
 
 </div>
 
@@ -129,42 +129,43 @@
 ---
 
 ## 📸 Ekran Görüntüleri
+
 ### 🏠 Landing Page & Kimlik Doğrulama
 
 <table>
   <tr>
     <td width="50%">
-      <img src="screenshots/Giri%C5%9F.jpg" alt="Landing Page"/>
+      <img src="screenshots/landing-page.jpg" alt="Landing Page"/>
       <p align="center"><b>Landing Page</b><br/>Modern ve minimalist giriş sayfası</p>
     </td>
     <td width="50%">
-      <img src="screenshots/1kay%C4%B1t_olma.jpg" alt="Kayıt Olma"/>
+      <img src="screenshots/01-register.jpg" alt="Kayıt Olma"/>
       <p align="center"><b>Kayıt Ekranı</b><br/>Kullanıcı kayıt formu</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/2kay%C4%B1t_olurken_gizlilik_metnini_kabul_ediyorum_popup_u_.jpg" alt="Gizlilik Politikası"/>
+      <img src="screenshots/02-privacy-policy.jpg" alt="Gizlilik Politikası"/>
       <p align="center"><b>Gizlilik Politikası</b><br/>KVKK uyumlu onay popup'ı</p>
     </td>
     <td width="50%">
-      <img src="screenshots/3kay%C4%B1t_olduktan_sonra_e_mail_do%C4%9Frulama_kodu_.jpg" alt="Email Doğrulama"/>
+      <img src="screenshots/03-email-verification-code.jpg" alt="Email Doğrulama"/>
       <p align="center"><b>Email Doğrulama</b><br/>6 haneli doğrulama kodu</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/51email_confirm_ekran%C4%B1_.jpg" alt="Email Confirm"/>
+      <img src="screenshots/51-email-confirm.jpg" alt="Email Confirm"/>
       <p align="center"><b>Doğrulama Ekranı</b><br/>Kod giriş ekranı</p>
     </td>
     <td width="50%">
-      <img src="screenshots/5Do%C4%9Frulama_kodu_girilmeden_giri%C5%9F_yap%C4%B1lamaz.jpg" alt="Email Zorunluluğu"/>
+      <img src="screenshots/05-email-required.jpg" alt="Email Zorunluluğu"/>
       <p align="center"><b>Güvenlik Kontrolü</b><br/>Email doğrulama zorunluluğu</p>
     </td>
   </tr>
   <tr>
     <td colspan="2">
-      <img src="screenshots/4giri%C5%9F_yapma.jpg" alt="Giriş Yapma"/>
+      <img src="screenshots/04-login.jpg" alt="Giriş Yapma"/>
       <p align="center"><b>Giriş Ekranı</b><br/>Güvenli login sistemi</p>
     </td>
   </tr>
@@ -175,41 +176,41 @@
 <table>
   <tr>
     <td width="50%">
-      <img src="screenshots/6E_MA%C4%B0L_G%C4%B0R%C4%B0%C5%9E_.jpg" alt="Gelen Kutusu"/>
+      <img src="screenshots/06-inbox.jpg" alt="Gelen Kutusu"/>
       <p align="center"><b>Gelen Kutusu</b><br/>Ana mesaj listesi</p>
     </td>
     <td width="50%">
-      <img src="screenshots/7YILDIZLI_MESAJ.jpg" alt="Yıldızlı Mesajlar"/>
+      <img src="screenshots/07-starred.jpg" alt="Yıldızlı Mesajlar"/>
       <p align="center"><b>Yıldızlı Mesajlar</b><br/>Önemli mesajlar</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/8KATEGOR%C4%B0YE_G%C3%96RE_MESAJLAR_FATURALAR.jpg" alt="Kategori Filtreleme"/>
+      <img src="screenshots/08-category-invoices.jpg" alt="Kategori Filtreleme"/>
       <p align="center"><b>Kategori - Faturalar</b><br/>Kategoriye göre filtreleme</p>
     </td>
     <td width="50%">
-      <img src="screenshots/K%C4%B0%C5%9E%C4%B0SEL_KATEGOR%C4%B0YE_G%C3%96RE.jpg" alt="Kişisel Kategori"/>
+      <img src="screenshots/category-personal.jpg" alt="Kişisel Kategori"/>
       <p align="center"><b>Kategori - Kişisel</b><br/>Kullanıcı kategorileri</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/9SEARCH_BAR_A_G%C3%96RE_MESAJ_ARAMA_.jpg" alt="Arama"/>
+      <img src="screenshots/09-search.jpg" alt="Arama"/>
       <p align="center"><b>Gelişmiş Arama</b><br/>AJAX ile canlı arama</p>
     </td>
     <td width="50%">
-      <img src="screenshots/10MA%C4%B0L_DETAY_SAYFASI.jpg" alt="Mesaj Detay"/>
+      <img src="screenshots/10-message-detail.jpg" alt="Mesaj Detay"/>
       <p align="center"><b>Mesaj Detayı</b><br/>Mesaj okuma ekranı</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/111MESAJ_YAZ_POPUP_MODAL.jpg" alt="Mesaj Yazma"/>
+      <img src="screenshots/111-compose-modal.jpg" alt="Mesaj Yazma"/>
       <p align="center"><b>Mesaj Oluştur</b><br/>Modal popup ile mesaj yazma</p>
     </td>
     <td width="50%">
-      <img src="screenshots/GELEN_MESAJLAR_HEADERDA_%C4%B0CON_%C5%9EEK%C4%B0L%C4%B0NDE_G%C3%96Z%C3%9CK%C4%B0YOR.jpg" alt="Header Bildirimleri"/>
+      <img src="screenshots/header-notifications.jpg" alt="Header Bildirimleri"/>
       <p align="center"><b>Header Bildirimleri</b><br/>Okunmamış mesajlar dropdown</p>
     </td>
   </tr>
@@ -220,17 +221,17 @@
 <table>
   <tr>
     <td colspan="2">
-      <img src="screenshots/11ANA_SAYFA_%C4%B0STAT%C4%B0ST%C4%B0K_EKRANI_.jpg" alt="Dashboard"/>
+      <img src="screenshots/11-dashboard.jpg" alt="Dashboard"/>
       <p align="center"><b>Dashboard</b><br/>8 widget ile istatistikler ve grafikler</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/12PROF%C4%B0L_DETAY_SAYFASI.jpg" alt="Profil Detay"/>
+      <img src="screenshots/12-profile-details.jpg" alt="Profil Detay"/>
       <p align="center"><b>Profil Detayları</b><br/>Kullanıcı bilgileri ve istatistikler</p>
     </td>
     <td width="50%">
-      <img src="screenshots/13PROF%C4%B0L_D%C3%9CZENLEME_SAYFASI.jpg" alt="Profil Düzenleme"/>
+      <img src="screenshots/13-profile-edit.jpg" alt="Profil Düzenleme"/>
       <p align="center"><b>Profil Düzenleme</b><br/>Bilgi güncelleme ve fotoğraf yükleme</p>
     </td>
   </tr>
@@ -241,7 +242,7 @@
 <table>
   <tr>
     <td>
-      <img src="screenshots/14AYARLAR_SAYFASI.jpg" alt="Ayarlar"/>
+      <img src="screenshots/14-settings.jpg" alt="Ayarlar"/>
       <p align="center"><b>Ayarlar Sayfası</b><br/>Şifre değiştirme ve hesap yönetimi</p>
     </td>
   </tr>
