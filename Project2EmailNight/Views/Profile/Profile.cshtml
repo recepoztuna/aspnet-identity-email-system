@@ -1,0 +1,402 @@
+﻿@model Project2EmailNight.Dtos.UserEditDto
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="page-wrapper">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+
+            <!-- Page Header -->
+            <div class="page-breadcrumb d-flex align-items-center mb-3">
+                <div class="breadcrumb-title pe-3">Kullanıcı Profili</div>
+                <div class="ps-3">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 p-0">
+                            <li class="breadcrumb-item"><a href="javascript:;"><i class='bx bx-home-alt'></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Profil</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class='bx bx-check-circle me-2'></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class='bx bx-error me-2'></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Profile Card -->
+            <div class="row">
+                <div class="col-12 col-lg-10 mx-auto">
+                    <div class="card radius-10">
+                        <div class="card-body">
+
+                            <!-- Left Side - Profile Info -->
+                            <div class="row">
+                                <!-- Sol Taraf -->
+                                <div class="col-12 col-md-4 text-center border-end">
+                                    <!-- Profil Fotoğrafı -->
+                                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                    {
+                                        <img src="/Images/@Model.ImageUrl" alt="Profil" class="profile-image mb-3">
+                                    }
+                                    else
+                                    {
+                                        <div class="profile-image profile-image-placeholder mb-3">
+                                            <span class="initials">@Model.Name?.Substring(0, 1)@Model.SurName?.Substring(0, 1)</span>
+                                        </div>
+                                    }
+
+                                    <!-- Ad Soyad -->
+                                    <h5 class="mb-1">@Model.Name @Model.SurName</h5>
+                                    <p class="text-muted mb-3">Hesap Yöneticisi</p>
+
+                                    <!-- İletişim Bilgileri -->
+                                    <div class="contact-info text-start mt-4">
+                                        <h6 class="mb-3">İletişim Bilgileri</h6>
+
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class='bx bx-envelope text-muted me-2'></i>
+                                            <small>@Model.Email</small>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                        {
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class='bx bx-phone text-muted me-2'></i>
+                                                <small>@Model.PhoneNumber</small>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Sağ Taraf - Tabs -->
+                                <div class="col-12 col-md-8">
+                                    <!-- Tab Buttons -->
+                                    <ul class="nav nav-tabs nav-primary mb-4" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#profileDetails" role="tab">
+                                                <i class='bx bx-user me-1'></i>Profil Detayları
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#editProfile" role="tab">
+                                                <i class='bx bx-edit me-1'></i>Profili Düzenle
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Tab Content -->
+                                    <div class="tab-content">
+
+                                        <!-- PROFIL DETAYLARI TAB -->
+                                        <div class="tab-pane fade show active" id="profileDetails" role="tabpanel">
+                                            <h6 class="mb-3">Kişisel Bilgiler</h6>
+
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <label class="text-muted small">Ad Soyad</label>
+                                                    <p class="mb-0">@Model.Name @Model.SurName</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="text-muted small">Email</label>
+                                                    <p class="mb-0">@Model.Email</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-4">
+                                                <div class="col-6">
+                                                    <label class="text-muted small">Konum</label>
+                                                    <p class="mb-0">Edirne, Türkiye</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="text-muted small">Kayıt Tarihi</label>
+                                                    <p class="mb-0">10 Şubat 2026</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Yetenekler -->
+                                            <!-- Aktivite İstatistikleri -->
+                                            <h6 class="mb-3 mt-4">Aktivite İstatistikleri</h6>
+
+                                            <!-- Profil Tamamlanma -->
+                                            <div class="stat-item mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span><i class='bx bx-user-check text-success me-1'></i>Profil Tamamlanma</span>
+                                                    <span class="text-success fw-bold">@(string.IsNullOrEmpty(Model.ImageUrl) ? "60" : string.IsNullOrEmpty(Model.PhoneNumber) ? "80" : "100")%</span>
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-success" style="width: @(string.IsNullOrEmpty(Model.ImageUrl) ? "60" : string.IsNullOrEmpty(Model.PhoneNumber) ? "80" : "100")%"></div>
+                                                </div>
+                                                <small class="text-muted">
+                                                    @if (string.IsNullOrEmpty(Model.ImageUrl))
+                                                    {
+                                                        <text>Profil fotoğrafı ekleyerek tamamlayın</text>
+                                                    }
+                                                    else if (string.IsNullOrEmpty(Model.PhoneNumber))
+                                                    {
+                                                        <text>Telefon numarası ekleyerek tamamlayın</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>Profiliniz tam! 🎉</text>
+                                                    }
+                                                </small>
+                                            </div>
+
+                                            <!-- Bu Ay Gönderilen Mesajlar -->
+                                            <div class="stat-item mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span><i class='bx bx-send text-primary me-1'></i>Bu Ay Gönderilenler</span>
+                                                    <span class="text-primary fw-bold">11 mesaj</span>
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-primary" style="width: 55%"></div>
+                                                </div>
+                                                <small class="text-muted">Hedef: 20 mesaj</small>
+                                            </div>
+
+                                            <!-- Bu Ay Alınan Mesajlar -->
+                                            <div class="stat-item mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span><i class='bx bx-envelope text-info me-1'></i>Bu Ay Gelenler</span>
+                                                    <span class="text-info fw-bold">50 mesaj</span>
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-info" style="width: 83%"></div>
+                                                </div>
+                                                <small class="text-muted">Ortalama: 60 mesaj/ay</small>
+                                            </div>
+
+                                            <!-- Yanıt Hızı -->
+                                            <div class="stat-item mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span><i class='bx bx-time text-warning me-1'></i>Yanıt Hızı</span>
+                                                    <span class="text-warning fw-bold">2 saat</span>
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-warning" style="width: 75%"></div>
+                                                </div>
+                                                <small class="text-muted">Ortalama yanıt süresi</small>
+                                            </div>
+
+                                            <!-- Aktif Kategori Kullanımı -->
+                                            <div class="stat-item mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span><i class='bx bx-category text-purple me-1'></i>Kategori Kullanımı</span>
+                                                    <span class="text-purple fw-bold">6 kategori</span>
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar" style="width: 100%; background: linear-gradient(90deg, #9c27b0, #673ab7);"></div>
+                                                </div>
+                                                <small class="text-muted">Tüm kategoriler aktif</small>
+                                            </div>
+                                        </div>
+                                        <!-- PROFİLİ DÜZENLE TAB -->
+                                        <div class="tab-pane fade" id="editProfile" role="tabpanel">
+                                            <form asp-action="Profile" method="post" enctype="multipart/form-data">
+
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Ad</label>
+                                                        <input type="text" class="form-control" name="Name"
+                                                               value="@Model.Name" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Soyad</label>
+                                                        <input type="text" class="form-control" name="SurName"
+                                                               value="@Model.SurName" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email Adresi</label>
+                                                    <input type="email" class="form-control" name="Email"
+                                                           value="@Model.Email" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Telefon</label>
+                                                    <input type="tel" class="form-control" name="PhoneNumber"
+                                                           value="@Model.PhoneNumber" placeholder="Değiştirilmeyecekse boş bırakın">
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label class="form-label">Profil Fotoğrafı</label>
+                                                    <div class="input-group">
+                                                        <input type="file" class="form-control" name="Image"
+                                                               accept="image/*" id="profileImageInput">
+                                                        <label class="input-group-text" for="profileImageInput">
+                                                            <i class='bx bx-upload'></i>
+                                                        </label>
+                                                    </div>
+                                                    <small class="text-muted">JPG veya PNG formatında, maksimum 5MB</small>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="submit" class="btn btn-primary px-4">
+                                                        <i class='bx bx-save me-1'></i>Değişiklikleri Kaydet
+                                                    </button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        /* LAYOUT BOŞLUKLARI */
+        body .page-wrapper {
+            padding: 0 !important;
+            margin-left: 120px !important;
+            margin-top: 20px !important;
+        }
+
+        body .page-content-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        body .page-content {
+            padding: 20px !important;
+            margin: 0 !important;
+        }
+
+        /* PROFİL FOTOĞRAFI */
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #6571ff;
+            box-shadow: 0 4px 12px rgba(101, 113, 255, 0.3);
+        }
+
+        .profile-image-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6571ff, #4f5fd8);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #6571ff;
+        }
+
+            .profile-image-placeholder .initials {
+                color: white;
+                font-size: 36px;
+                font-weight: bold;
+            }
+
+        /* CARD */
+        .radius-10 {
+            border-radius: 10px;
+        }
+
+        .card {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        /* CONTACT INFO */
+        .contact-info {
+            padding: 0 20px;
+        }
+
+        /* TABS */
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+
+            .nav-tabs .nav-link.active {
+                color: #6571ff;
+                border-bottom: 2px solid #6571ff;
+                background: transparent;
+            }
+
+            .nav-tabs .nav-link:hover {
+                border-bottom: 2px solid #6571ff;
+            }
+
+        /* FORM */
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control:focus {
+            border-color: #6571ff;
+            box-shadow: 0 0 0 0.2rem rgba(101, 113, 255, 0.25);
+        }
+
+        /* PROGRESS BARS */
+        .skill-item {
+            margin-bottom: 1rem;
+        }
+
+        .progress {
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+        }
+            /* İSTATİSTİK İTEMLERI */
+            .stat-item {
+                padding: 10px;
+                border-radius: 8px;
+                background-color: #f8f9fa;
+                transition: all 0.3s;
+            }
+
+                .stat-item:hover {
+                    background-color: #e9ecef;
+                    transform: translateX(5px);
+                }
+
+            .text-purple {
+                color: #9c27b0;
+            }
+
+            /* PROGRESS BARS */
+            .progress {
+                border-radius: 10px;
+                background-color: #e9ecef;
+                overflow: visible;
+            }
+
+            .progress-bar {
+                border-radius: 10px;
+                transition: width 1s ease-in-out;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+    </style>
+}

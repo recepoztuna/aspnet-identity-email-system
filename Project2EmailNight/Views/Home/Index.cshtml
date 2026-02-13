@@ -1,8 +1,284 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = null;
 }
 
-<div class="text-center">
-    <h1 class="display-4"></h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core"></a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ulak - Modern Email Yönetimi</title>
+    <link rel="icon" href="~/assets/images/favicon-32x32.png" type="image/png" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="landing-page">
+        <!-- Background Image with Overlay -->
+        <div class="bg-image"></div>
+        <div class="bg-overlay"></div>
+
+        <!-- Content -->
+        <div class="landing-content">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-7 text-center">
+
+                        <!-- Logo & Title -->
+                        <div class="hero-section animate-fade-in">
+                            <div class="logo-wrapper mb-4">
+                                <i class='bx bxs-envelope logo-icon'></i>
+                            </div>
+                            <h1 class="hero-title mb-3">Ulak</h1>
+                            <p class="hero-subtitle mb-5">
+                                Modern email yönetim sistemi
+                            </p>
+                        </div>
+
+                        <!-- Minimal Features (Sadece İkonlar) -->
+                        <div class="features-minimal mb-5 animate-slide-up">
+                            <i class='bx bx-check-shield mini-icon' title="Güvenli"></i>
+                            <i class='bx bx-category mini-icon' title="Organize"></i>
+                            <i class='bx bx-trending-up mini-icon' title="Verimli"></i>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="cta-section animate-fade-in-delay">
+                            <a asp-controller="Login" asp-action="UserLogin" class="btn btn-minimal btn-login">
+                                <i class='bx bx-log-in me-2'></i>Giriş Yap
+                            </a>
+                            <a asp-controller="Register" asp-action="CreateUser" class="btn btn-minimal btn-register">
+                                <i class='bx bx-user-plus me-2'></i>Kayıt Ol
+                            </a>
+                        </div>
+
+                        <!-- Footer Info -->
+                        <div class="footer-info mt-5 animate-fade-in-delay-2">
+                            <small class="text-white">
+                                <i class='bx bx-shield-quarter me-1'></i>
+                                Güvenli ve şifreli
+                            </small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* LANDING PAGE */
+        .landing-page {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* BACKGROUND IMAGE - NET VE BELIRGIN */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/Images/deneme1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(0px); /* Hiç blur yok! */
+            transform: scale(1.02);
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.45) 100% ); /* Sadece hafif koyu overlay */
+        }
+
+        /* CONTENT */
+        .landing-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        /* LOGO & TITLE */
+        .logo-wrapper {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-icon {
+            font-size: 100px;
+            color: white;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 3px 8px rgba(0,0,0,0.4);
+            font-weight: 300;
+        }
+
+        /* MINIMAL FEATURES - Sadece İkonlar */
+        .features-minimal {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .mini-icon {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+            .mini-icon:hover {
+                color: white;
+                transform: translateY(-5px);
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+            }
+
+        /* MINIMAL BUTTONS */
+        .btn-minimal {
+            padding: 16px 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            margin: 0 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+            .btn-minimal:hover {
+                background: rgba(255, 255, 255, 0.25);
+                border-color: rgba(255, 255, 255, 0.7);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+                color: white;
+            }
+
+        /* FOOTER INFO */
+        .footer-info {
+            opacity: 0.8;
+        }
+
+        /* ANIMATIONS */
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .animate-fade-in-delay {
+            animation: fadeIn 1.2s ease-out 0.4s backwards;
+        }
+
+        .animate-fade-in-delay-2 {
+            animation: fadeIn 1.2s ease-out 0.8s backwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 1.2s ease-out 0.3s backwards;
+        }
+
+        /* RESPONSIVE */
+        @@media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .btn-minimal {
+                display: block;
+                margin: 10px auto;
+                width: 70%;
+            }
+
+            .logo-icon {
+                font-size: 70px;
+            }
+
+            .features-minimal {
+                gap: 30px;
+            }
+
+            .mini-icon {
+                font-size: 28px;
+            }
+        }
+    </style>
+
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

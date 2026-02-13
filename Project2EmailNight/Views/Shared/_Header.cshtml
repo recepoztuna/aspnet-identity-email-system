@@ -107,6 +107,7 @@
 						</div>
 					</div>
 				</li>
+				
 				<li class="nav-item dropdown dropdown-user-profile">
 					<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
 						<div class="d-flex user-box align-items-center">
@@ -114,10 +115,19 @@
 								<p class="user-name mb-0">@ViewData["UserFirstName"] @ViewData["UserLastName"]</p>
 								<p class="designattion mb-0">@ViewData["UserEmail"]</p>
 							</div>
-							<div class="user-avatar-header bg-primary text-white rounded-circle d-flex align-items-center justify-content-center ms-2"
-								 style="width: 40px; height: 40px; font-weight: bold; font-size: 14px;">
-								@ViewData["UserInitials"]
-							</div>
+							@if (!string.IsNullOrEmpty(ViewData["UserProfileImage"]?.ToString()))
+							{
+								<img src="/Images/@ViewData["UserProfileImage"]" alt="Profil"
+									 class="rounded-circle ms-2"
+									 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #6571ff;">
+							}
+							else
+							{
+								<div class="user-avatar-header bg-primary text-white rounded-circle d-flex align-items-center justify-content-center ms-2"
+									 style="width: 40px; height: 40px; font-weight: bold; font-size: 14px;">
+									@ViewData["UserInitials"]
+								</div>
+							}
 						</div>
 					</a>
 					<div class="dropdown-menu dropdown-menu-end">
@@ -130,7 +140,6 @@
 						<a class="dropdown-item" asp-controller="Profile" asp-action="Settings">
 							<i class="bx bx-cog"></i><span>Ayarlar</span>
 						</a>
-						
 						
 					</div>
 				</li>

@@ -113,5 +113,11 @@ namespace Project2EmailNight.Controllers
 
 			return RedirectToAction("ConfirmEmail", "Register");
 		}
+		public async Task<IActionResult> Logout()
+		{
+			await _signInManager.SignOutAsync();
+			TempData["SuccessMessage"] = "Başarıyla çıkış yaptınız.";
+			return RedirectToAction("UserLogin");
+		}
 	}
 }

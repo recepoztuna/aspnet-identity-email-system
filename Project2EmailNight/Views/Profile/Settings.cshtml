@@ -1,0 +1,174 @@
+﻿@model Project2EmailNight.Dtos.ChangePasswordDto
+@{
+    ViewData["Title"] = "Ayarlar";
+}
+
+<div class="page-wrapper">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+
+            <!-- Page Header -->
+            <div class="page-breadcrumb d-flex align-items-center mb-3">
+                <div class="breadcrumb-title pe-3">Ayarlar</div>
+                <div class="ps-3">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 p-0">
+                            <li class="breadcrumb-item"><a href="javascript:;"><i class='bx bx-home-alt'></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Hesap Ayarları</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class='bx bx-check-circle me-2'></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class='bx bx-error me-2'></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-12 col-lg-8 mx-auto">
+
+                    <!-- Şifre Değiştir -->
+                    <div class="card radius-10 mb-4">
+                        <div class="card-header bg-transparent border-bottom">
+                            <h6 class="mb-0">
+                                <i class='bx bx-lock-alt me-2 text-primary'></i>Şifre Değiştir
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="ChangePassword" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Mevcut Şifre</label>
+                                    <input type="password" class="form-control" asp-for="CurrentPassword" required>
+                                    <span asp-validation-for="CurrentPassword" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Yeni Şifre</label>
+                                    <input type="password" class="form-control" asp-for="NewPassword" required>
+                                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                                    <small class="text-muted">En az 6 karakter olmalı</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Yeni Şifre Tekrar</label>
+                                    <input type="password" class="form-control" asp-for="ConfirmPassword" required>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class='bx bx-save me-1'></i>Şifreyi Güncelle
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Hesap Silme -->
+                    <div class="card radius-10 border-danger">
+                        <div class="card-header bg-transparent border-bottom border-danger">
+                            <h6 class="mb-0 text-danger">
+                                <i class='bx bx-error me-2'></i>Tehlikeli Bölge
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger border-0" role="alert">
+                                <h6 class="alert-heading">⚠️ Hesabınızı Silmek İstediğinizden Emin misiniz?</h6>
+                                <p class="mb-0">Bu işlem geri alınamaz. Tüm mesajlarınız, kategorileriniz ve verileriniz kalıcı olarak silinecektir.</p>
+                            </div>
+
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class='bx bx-trash me-1'></i>Hesabı Kalıcı Olarak Sil
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class='bx bx-error-circle me-2'></i>Hesap Silme Onayı
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="DeleteAccount" method="post">
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Uyarı:</strong> Bu işlem geri alınamaz!
+                    </div>
+                    <p>Hesabınızı silmek için email adresinizi yazın:</p>
+                    <input type="email" class="form-control" name="confirmEmail" placeholder="Email adresinizi girin" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger">Hesabı Sil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <style>
+        /* LAYOUT BOŞLUKLARI */
+        body .page-wrapper {
+            padding: 0 !important;
+            margin-left: 120px !important;
+            margin-top: 20px !important;
+        }
+
+        body .page-content-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        body .page-content {
+            padding: 20px !important;
+            margin: 0 !important;
+        }
+
+        /* CARD */
+        .radius-10 {
+            border-radius: 10px;
+        }
+
+        .card {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        /* FORM */
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control:focus {
+            border-color: #6571ff;
+            box-shadow: 0 0 0 0.2rem rgba(101, 113, 255, 0.25);
+        }
+    </style>
+}

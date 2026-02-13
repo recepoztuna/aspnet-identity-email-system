@@ -12,6 +12,7 @@
     ViewData["UserInitials"] = currentUser != null
         ? $"{currentUser.FirstName?.Substring(0, 1)}{currentUser.LastName?.Substring(0, 1)}".ToUpper()
         : "??";
+    ViewData["UserProfileImage"] = currentUser?.ProfileImageUrl;
 
     // TÜM SAYILARI HESAPLA
     var unreadMessages = new List<Message>();
